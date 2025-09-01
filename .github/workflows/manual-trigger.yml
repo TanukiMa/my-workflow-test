@@ -1,0 +1,21 @@
+name: Manual Python Version Check
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # gh workflow run やWeb UIからの手動実行を許可
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Always run this step
+        run: echo "This step runs on both push and dispatch."
+
+      - name: Run python -v only on manual trigger
+        # github.event_name が 'workflow_dispatch' の場合のみ実行
+        if: github.event_name == 'workflow_dispatch'
+        run: python -v
