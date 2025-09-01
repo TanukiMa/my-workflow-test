@@ -20,4 +20,5 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: |
           python -v 2>&1 | tee hoge
+          echo "--- Content of file 'hoge' ---"
           cat hoge
