@@ -37,6 +37,12 @@ def get_env_config() -> dict:
         "password": _env("PG_PASSWORD"),
     }
 
+def get_db_connection_from_args(args):
+    host = args.host or os.environ.get("PG_HOST")
+    port = args.port or os.environ.get("PG_PORT")
+    db = args.database or os.environ.get("PG_DATABASE")
+    user = args.user or os.environ.get("PG_USER")
+    password = args.password or os.environ.get("PG_PASSWORD")
 
 def add_common_args(parser):
     """

@@ -14,7 +14,6 @@ from psycopg2 import Error
 
 from db_utils import add_common_args, get_db_connection_from_args, get_dict_cursor
 
-
 def generate_tsv(conn, out_fp):
     cur = get_dict_cursor(conn)
     generated = set()
