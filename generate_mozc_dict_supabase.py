@@ -23,8 +23,8 @@ def generate_tsv(supabase: Client, out_fp):
             # RPC関数が存在しない場合は直接テーブルクエリ
             response = supabase.table('words') \
                 .select('reading, word, pos_codes(name)') \
-                .order('reading', ascending=True) \
-                .order('word', ascending=True) \
+                .order('reading', desc=False) \
+                .order('word', desc=False) \
                 .execute()
 
         if not response.data:
