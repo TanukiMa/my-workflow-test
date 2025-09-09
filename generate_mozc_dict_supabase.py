@@ -19,21 +19,27 @@ def generate_tsv(supabase: Client, out_fp):
     count = 0
 
     try:
-        # Supabase RPC または直接クエリを使用
-        # RPC関数を使う場合（推奨）
-        response = supabase.rpc('get_words_with_pos', {}).execute()
-        
-        # 直接テーブルを結合する場合（RLSが有効な場合は制限される可能性あり）
-        # response = supabase.table('words') \
-        #     .select('reading, word, pos_codes(name)') \
-        #     .order('reading', ascending=True) \
-        #     .order('word', ascending=True) \
-        #     .execute()
+        # Supabase RPC を使用
+        try:
+            # RPC関数を使う場合（推奨）
+            response = supabase.rpc('get_words_with_pos', {}).execute()
+        except Exception:
+            # RPC関数が存在しない場合は直接テーブルクエリ
+            response = supabase.table('words') \
+                .select('reading, word, pos_codes(name)') \
+                .order('reading', ascending=True) \
+                .order('word', ascending=True) \
+                .execute()
+
+        if not response.
+            print("データが見つかりませんでした", file=sys.stderr)
+            return
 
         for row in response.
-            reading = row['reading']
-            word = row['word']
-            pos_name = row['pos_name']  # RPCからの場合
+            reading = row.get('reading', '')
+            word = row.get('word', '')
+            # RPC関数の場合とテーブル直接クエリの場合で処理を分岐
+            pos_name = row.get('pos_name') or (row.get('pos_codes', {}).get('name', '') if row.get('pos_codes') else '')
 
             if pos_name == "固有名詞":
                 line = f"{reading}\t1920\t1920\t4001\t{word}"
@@ -48,11 +54,16 @@ def generate_tsv(supabase: Client, out_fp):
                 generated.add(line)
                 count += 1
 
+        if count == 0:
+            print("⚠ 処理可能なデータがありませんでした", file=sys.stderr)
+
     except Exception as e:
         print(f"データ取得エラー: {e}", file=sys.stderr)
         raise
-
-    print(f"✔ {count} 行生成 (unique)", file=sys.stderr)
+    finally:
+        if out_fp and out_fp is not sys.stdout:
+            out_fp.close()
+        print(f"✔ {count} 行生成 (unique)", file=sys.stderr)
 
 
 def build_parser():
