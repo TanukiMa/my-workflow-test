@@ -2,22 +2,18 @@
 # -*- coding: utf-8 -*-
 """
 Supabase → Mozc 辞書 TSV 生成スクリプト
-
 ・words / pos_codes テーブルを結合して Mozc 用 5 列 TSV を出力
 ・--output/-o でファイル指定、未指定時は標準出力
 ・Supabase 接続オプションは共通 CLI (+ 環境変数)
 """
-
 import argparse
 import sys
 from supabase import create_client, Client
-
 from supabase_utils import add_common_args, get_supabase_client_from_args
 
 def generate_tsv(supabase: Client, out_fp):
     generated = set()
     count = 0
-
     try:
         # Supabase RPC を使用
         try:
@@ -31,11 +27,11 @@ def generate_tsv(supabase: Client, out_fp):
                 .order('word', ascending=True) \
                 .execute()
 
-        if not response.
+        if not response.data:
             print("データが見つかりませんでした", file=sys.stderr)
             return
 
-        for row in response.
+        for row in response.data:
             reading = row.get('reading', '')
             word = row.get('word', '')
             # RPC関数の場合とテーブル直接クエリの場合で処理を分岐
@@ -65,7 +61,6 @@ def generate_tsv(supabase: Client, out_fp):
             out_fp.close()
         print(f"✔ {count} 行生成 (unique)", file=sys.stderr)
 
-
 def build_parser():
     p = argparse.ArgumentParser(description="Mozc 辞書 TSV 生成")
     p.add_argument(
@@ -74,16 +69,13 @@ def build_parser():
     add_common_args(p)
     return p
 
-
 def main():
     parser = build_parser()
     args = parser.parse_args()
-
     supabase = None
     out_fp = None
     try:
         supabase = get_supabase_client_from_args(args)
-
         if args.output:
             out_fp = open(args.output, "w", encoding="utf-8", newline="\n")
             print(f"ファイル出力: {args.output}", file=sys.stderr)
@@ -101,7 +93,5 @@ def main():
             out_fp.close()
         print("処理完了", file=sys.stderr)
 
-
 if __name__ == "__main__":
     main()
-
