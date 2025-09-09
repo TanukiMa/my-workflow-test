@@ -19,10 +19,12 @@ jobs:
 
       - name: Import CSV
         env:
-          PG_HOST: ${{ secrets.PG_HOST }}
-          PG_PORT: ${{ secrets.PG_PORT }}
-          PG_DATABASE: ${{ secrets.PG_DATABASE }}
-          PG_USER: ${{ secrets.PG_USER }}
-          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+#          PG_HOST: ${{ secrets.PG_HOST }}
+#          PG_PORT: ${{ secrets.PG_PORT }}
+#          PG_DATABASE: ${{ secrets.PG_DATABASE }}
+#          PG_USER: ${{ secrets.PG_USER }}
+#          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python generate_mozc_dict_supabase.py
 
